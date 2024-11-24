@@ -13,10 +13,5 @@ import org.springframework.mail.javamail.JavaMailSender;
 @Getter
 @RequiredArgsConstructor
 class MailProperties {
-
-    /**
-     * Email address that the email should be sent from.
-     */
     private final String from;
-
 }
