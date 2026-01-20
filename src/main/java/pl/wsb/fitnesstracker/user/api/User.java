@@ -6,12 +6,15 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
+import pl.wsb.fitnesstracker.training.api.Training;
+import java.util.List;
 import java.time.LocalDate;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class User {
@@ -32,17 +35,10 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    public User(
-            final String firstName,
-            final String lastName,
-            final LocalDate birthdate,
-            final String email) {
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Training> trainings;
 
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthdate = birthdate;
-        this.email = email;
-    }
+
 
     @Nullable
     public Long getId() {
@@ -82,6 +78,17 @@ public class User {
     }
 
     public void setEmail(String email) {
+        this.email = email;
+    }
+    public User(
+            final String firstName,
+            final String lastName,
+            final LocalDate birthdate,
+            final String email) {
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthdate = birthdate;
         this.email = email;
     }
 }

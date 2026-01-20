@@ -1,11 +1,14 @@
 package pl.wsb.fitnesstracker.user.internal;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pl.wsb.fitnesstracker.user.api.BasicUserDto;
 import pl.wsb.fitnesstracker.user.api.User;
+import pl.wsb.fitnesstracker.user.api.UserDto;
+import pl.wsb.fitnesstracker.user.api.UserIdEmail;
 import pl.wsb.fitnesstracker.user.api.UserProvider;
 import pl.wsb.fitnesstracker.user.api.UserService;
-
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,5 +44,61 @@ class UserServiceImpl implements UserService, UserProvider {
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
+    public List<BasicUserDto> findAllUsersWithBasicInformation() {
+        return userRepository.findAllUsersWithBasicData().stream()
+                .map(
+                        user ->
+                                new BasicUserDto(
+                                        user.getId(), user.getFirstName(), user.getLastName()))
+                .toList();
+    }
 
+    public UserDto findUserById(Long id) {
+        User user = userRepository.findUserById(id);
+        return new UserDto(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getBirthdate(),
+                user.getEmail());
+    }
+
+    @Transactional
+    public User createUser(final UserDto user) {
+        User entity = new User(user.firstName(), user.lastName(), user.birthdate(), user.email());
+        return userRepository.save(entity);
+    }
+
+    @Transactional
+    public void deleteUser(Long id){
+        userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void updateUser(Long id, UserDto userDto) {
+        userRepository.findById(id).ifPresent(user -> {
+            user.setFirstName(userDto.firstName());
+            user.setLastName(userDto.lastName());
+            user.setBirthdate(userDto.birthdate());
+            user.setEmail(userDto.email());
+        });
+    }
+
+    public List<UserIdEmail> findUserByEmail(String email){
+        List<User> users = userRepository.findUsersByEmailContainingIgnoreCase(email);
+        return users.stream().map(user -> new UserIdEmail(user.getId(), user.getEmail())).toList();
+    }
+
+    public List<UserDto> findAllUsersOlderThan(LocalDate time) {
+        return userRepository.findByBirthdateGreaterThan(time).stream()
+                .map(
+                        user ->
+                                new UserDto(
+                                        user.getId(),
+                                        user.getFirstName(),
+                                        user.getLastName(),
+                                        user.getBirthdate(),
+                                        user.getEmail()))
+                .toList();
+    }
 }

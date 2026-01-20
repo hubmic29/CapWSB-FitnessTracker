@@ -15,6 +15,7 @@ import pl.wsb.fitnesstracker.user.api.User;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static java.time.LocalDate.now;
@@ -43,11 +44,11 @@ class InitialDataLoader {
 
     @EventListener
     @Transactional
-    @SuppressWarnings({"squid:S1854", "squid:S1481", "squid:S1192", "unused"})
     public void loadInitialData(ContextRefreshedEvent event) {
         verifyDependenciesAutowired();
         List<User> sampleUserList = generateSampleUsers();
-        List<Training> sampleTrainingList = generateTrainingData(sampleUserList);
+        generateTrainingData(sampleUserList);
+        log.info("Initial data loaded successfully.");
     }
 
     private User generateUser(String name, String lastName, int age) {
@@ -71,74 +72,77 @@ class InitialDataLoader {
         users.add(generateUser("Noah", "Miller", 39));
         users.add(generateUser("Grace", "Anderson", 33));
         users.add(generateUser("Oliver", "Swift", 29));
+        users.add(generateUser("Mikolaj", "Swiety", 67));
 
         return users;
     }
 
     private List<Training> generateTrainingData(List<User> users) {
         List<Training> trainingData = new ArrayList<>();
-
-        // Definiujemy formatter pasujący do formatu tekstowego daty
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        // Tworzymy obiekty Training bezpośrednio parsując do LocalDateTime
+
         trainingData.add(new Training(users.get(0),
-                LocalDateTime.parse("2024-01-19 08:00:00", formatter),
-                LocalDateTime.parse("2024-01-19 09:30:00", formatter),
+                convertToDate("2024-01-19 08:00:00", formatter),
+                convertToDate("2024-01-19 09:30:00", formatter),
                 ActivityType.RUNNING, 10.5, 8.2));
 
         trainingData.add(new Training(users.get(1),
-                LocalDateTime.parse("2024-01-18 15:30:00", formatter),
-                LocalDateTime.parse("2024-01-18 17:00:00", formatter),
+                convertToDate("2024-01-18 15:30:00", formatter),
+                convertToDate("2024-01-18 17:00:00", formatter),
                 ActivityType.CYCLING, 25.0, 18.5));
 
         trainingData.add(new Training(users.get(2),
-                LocalDateTime.parse("2024-01-17 07:45:00", formatter),
-                LocalDateTime.parse("2024-01-17 09:00:00", formatter),
+                convertToDate("2024-01-17 07:45:00", formatter),
+                convertToDate("2024-01-17 09:00:00", formatter),
                 ActivityType.WALKING, 5.2, 5.8));
 
         trainingData.add(new Training(users.get(3),
-                LocalDateTime.parse("2024-01-16 18:00:00", formatter),
-                LocalDateTime.parse("2024-01-16 19:30:00", formatter),
+                convertToDate("2024-01-16 18:00:00", formatter),
+                convertToDate("2024-01-16 19:30:00", formatter),
                 ActivityType.RUNNING, 12.3, 9.0));
 
         trainingData.add(new Training(users.get(4),
-                LocalDateTime.parse("2024-01-15 12:30:00", formatter),
-                LocalDateTime.parse("2024-01-15 13:45:00", formatter),
+                convertToDate("2024-01-15 12:30:00", formatter),
+                convertToDate("2024-01-15 13:45:00", formatter),
                 ActivityType.CYCLING, 18.7, 15.3));
 
         trainingData.add(new Training(users.get(5),
-                LocalDateTime.parse("2024-01-14 09:00:00", formatter),
-                LocalDateTime.parse("2024-01-14 10:15:00", formatter),
+                convertToDate("2024-01-14 09:00:00", formatter),
+                convertToDate("2024-01-14 10:15:00", formatter),
                 ActivityType.WALKING, 3.5, 4.0));
 
         trainingData.add(new Training(users.get(6),
-                LocalDateTime.parse("2024-01-13 16:45:00", formatter),
-                LocalDateTime.parse("2024-01-13 18:30:00", formatter),
+                convertToDate("2024-01-13 16:45:00", formatter),
+                convertToDate("2024-01-13 18:30:00", formatter),
                 ActivityType.RUNNING, 15.0, 10.8));
 
         trainingData.add(new Training(users.get(7),
-                LocalDateTime.parse("2024-01-12 11:30:00", formatter),
-                LocalDateTime.parse("2024-01-12 12:45:00", formatter),
+                convertToDate("2024-01-12 11:30:00", formatter),
+                convertToDate("2024-01-12 12:45:00", formatter),
                 ActivityType.CYCLING, 22.5, 17.2));
 
         trainingData.add(new Training(users.get(8),
-                LocalDateTime.parse("2024-01-11 07:15:00", formatter),
-                LocalDateTime.parse("2024-01-11 08:30:00", formatter),
+                convertToDate("2024-01-11 07:15:00", formatter),
+                convertToDate("2024-01-11 08:30:00", formatter),
                 ActivityType.WALKING, 4.2, 4.5));
 
         trainingData.add(new Training(users.get(9),
-                LocalDateTime.parse("2024-01-10 14:00:00", formatter),
-                LocalDateTime.parse("2024-01-10 15:15:00", formatter),
+                convertToDate("2024-01-10 14:00:00", formatter),
+                convertToDate("2024-01-10 15:15:00", formatter),
                 ActivityType.RUNNING, 11.8, 8.5));
 
         trainingRepository.saveAll(trainingData);
         return trainingData;
     }
 
+    private Date convertToDate(String dateString, DateTimeFormatter formatter) {
+        return java.sql.Timestamp.valueOf(LocalDateTime.parse(dateString, formatter));
+    }
+
     private void verifyDependenciesAutowired() {
-        if (isNull(userRepository)) {
-            throw new IllegalStateException("Initial data loader was not autowired correctly " + this);
+        if (isNull(userRepository) || isNull(trainingRepository)) {
+            throw new IllegalStateException("Initial data loader was not autowired correctly");
         }
     }
 }
