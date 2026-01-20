@@ -9,12 +9,12 @@ import pl.wsb.fitnesstracker.training.internal.ActivityType;
 import pl.wsb.fitnesstracker.user.api.User;
 
 import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "trainings")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 public class Training {
 
     @Id
@@ -22,32 +22,24 @@ public class Training {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "start_time", nullable = false)
-    private Date startTime;
+    private LocalDateTime startTime;
 
-    @Column(name = "end_time", nullable = false)
-    private Date endTime;
+    @Column(name = "end_time")
+    private LocalDateTime endTime;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "activity_type", nullable = false)
     private ActivityType activityType;
 
-    @Column(name = "distance")
     private double distance;
-
-    @Column(name = "average_speed")
     private double averageSpeed;
 
-    public Training(
-            final User user,
-            final Date startTime,
-            final Date endTime,
-            final ActivityType activityType,
-            final double distance,
-            final double averageSpeed) {
+    // Ten konstruktor naprawi Twoje błędy (dostosowany do InitialDataLoader)
+    public Training(User user, LocalDateTime startTime, LocalDateTime endTime, ActivityType activityType, double distance, double averageSpeed) {
         this.user = user;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -55,5 +47,4 @@ public class Training {
         this.distance = distance;
         this.averageSpeed = averageSpeed;
     }
-
 }

@@ -35,4 +35,12 @@ public class Event {
     @Column(name = "city")
     private String city;
 
+    public Event(String name, String description, LocalDateTime startTime, LocalDateTime endTime, String country, String city) {
+        this.name = name;
+        this.description = description;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.country = country;
+        this.city = city;
+    }
 }

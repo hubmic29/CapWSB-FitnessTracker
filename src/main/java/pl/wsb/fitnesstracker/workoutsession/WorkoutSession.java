@@ -38,6 +38,16 @@ public class WorkoutSession {
     private Double endLongitude;
 
     @Column(name = "altitude")
-    private Double altitude;
 
+    private Double altitude;
+    public WorkoutSession(Training training, LocalDateTime timestamp, double startLatitude,
+                          double startLongitude, Double endLatitude, Double endLongitude, Double altitude) {
+        this.training = training;
+        this.timestamp = timestamp;
+        this.startLatitude = startLatitude;
+        this.startLongitude = startLongitude;
+        this.endLatitude = endLatitude;
+        this.endLongitude = endLongitude;
+        this.altitude = altitude;
+    }
 }

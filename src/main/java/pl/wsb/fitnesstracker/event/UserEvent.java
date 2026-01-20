@@ -29,7 +29,13 @@ public class UserEvent {
 
     @Column(name = "status")
     @Setter
+
     private String status;
+    public UserEvent(User user, Event event, String status) {
+        this.user = user;
+        this.event = event;
+        this.status = status;
+    }
 }
 
 
