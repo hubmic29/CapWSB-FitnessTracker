@@ -20,8 +20,8 @@ public class Statistics {
     @Nullable
     private Long id;
 
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @OneToOne(fetch = FetchType.LAZY)
     private User user;
 
     @Column(name = "total_trainings", nullable = false)
