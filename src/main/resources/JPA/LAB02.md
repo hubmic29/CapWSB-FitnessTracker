@@ -11,7 +11,7 @@ Laboratorium II - Relacje w JPA - stan na 8.11.2025
 5. Zapoznaj się z poniższym schematem relacyjnym bazy danych. Korzystając z wiedzy przekazanej na wykładzie, literatury
    oraz internetu, uzupełnij brakujące tabele i relacje w aktualnej definicji encji (zwróć uwagę także na nazwy tabel).
    Określ nullowalność kolumn i kaskady. Ustaw relacje tak, aby przynajmniej raz była wykorzystana relacja jednostronna
-   i
+   2i
    dwustronna. **Pracujemy nad 3 Encjami Statistics, HealthMetrics, User.**
 
    ![](db_schema.png)
